@@ -1,0 +1,23 @@
+
+body{
+    background: rgb(5, 23, 61);
+    color: white;
+}
+table {
+    border-collapse: collapse;
+    width: 80%;
+    color: rgb(255, 255, 255);
+}
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+tr:nth-child(even) {
+    background-color: #0080ff;
+}
+tr:nth-child(odd) {
+    background-color: #465a5a;
+}
+.total {
+    font-weight: bold;
+}
