@@ -12,12 +12,35 @@ th, td {
     text-align: left;
     padding: 8px;
 }
-tr:nth-child(even) {
+/* tr:nth-child(even) {
     background-color: #0080ff;
 }
 tr:nth-child(odd) {
     background-color: #465a5a;
+} */
+
+tr {
+    background-color: #465a5a;
 }
 .total {
     font-weight: bold;
+}
+
+select{
+    background-color: #465a5a;
+    color: white;
+    border: none;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+
+}
+
+input{
+    background-color: #465a5a;
+    color: white;
+    border: none;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
 }

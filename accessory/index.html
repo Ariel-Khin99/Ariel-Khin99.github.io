@@ -4,19 +4,20 @@
     <title>Car Accessories</title>  
     <link rel = "stylesheet" href="../style/global.css">
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script> 
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 </head>
-<body>
+<body style="padding: 20px">
     <h1>Car Accessories</h1>
    
-    <form id="accessoryForm">
+   <!-- <form id="accessoryForm">
         <label for="accessory">Select an accessory:</label>
         <select id="accessory" name="accessory">
             <option value="carCover">Car Cover</option>
             <option value="seatCovers">Seat Covers</option>
             <option value="floorMats">Floor Mats</option>
             <option value="wheel"> Wheel </option>
-            <!-- Add more options as needed -->
+          
         </select>
        
         <label for="amount">Amount:</label>
@@ -24,7 +25,9 @@
        
         <button type="button" onclick="addToProductList()">Add</button>
     </form>
-   
+-->
+<button type="button" data-toggle="modal" data-target="#modal" style="background-color: black; color: white; padding: 5px 30px; border-radius: 10px"
+>Add</button>
     <h2>Product List</h2>
 
     <table id="productList">
@@ -39,30 +42,104 @@
 
     </tbody>
     </table>
-   
+   <br>
+   <br>
     <p class="total">Total Price: $<span id="totalPrice">0</span>
-    <br>VAT: <span id="vatAmount"></span><br>
-    Net Amount: <span id="netPrice"></span></p>
-   
-    <script>
-        function addToProductList() {
-            var accessory = $("#accessory").val();
-            var amount = $("#amount").val();
-            var price = calculatePrice(accessory);
-            var total = price * amount
+    <br>VAT: $<span id="vatAmount">0</span><br>
+    Net Amount: $<span id="netPrice">0</span></p>
 
-            var tableRef = $("#productList tbody")
-            tableRef.before(`
-            <tr>
-                <td>${accessory}</td>
-                <td>${amount}</td>
-                <td>${total}</td>
-            </tr>`)
-           
-            updateTotalPrice(total);
-            calculateVAT()
+    <!-- Modal -->
+    <div class="modal fade " id="modal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel">Add Item</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                        <td>Accessories</td>
+                        <td>
+                            <select id="accessory" style="background-color: black;" name="accessory">
+                                <option value="carCover">Car Cover</option>
+                                <option value="seatCovers">Seat Covers</option>
+                                <option value="floorMats">Floor Mats</option>
+                                <option value="wheel"> Wheel </option>
+                              
+                            </select>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Amount</td>
+                        <td><input  style="background-color: black;" type="number" min="0" id="amount"></td>
+                    </tr>
+                   
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn" style="background-color: black; color: white" onclick="addItem()">Save New
+                    Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+crossorigin="anonymous"></script>  
+    <script>
+        const items = []
+
+        function addItem(){
+            const accessory = $("#accessory").val();
+            const amount = $("#amount").val();
+            const price = calculatePrice(accessory);
+            const total = price * amount;
+            items.push({accessory, amount, total});
+            renderTable();
+            $('#modal').modal('hide');
         }
-       
+        function deleteItem(index){
+            items.splice(index, 1);
+            renderTable();
+        }
+
+        function renderTable(){
+            const tableRef = $("#productList tbody");
+            tableRef.empty();
+            items.forEach((item, index) => {
+                tableRef.append(`
+                <tr>
+                    <td>${item.accessory}</td>
+                    <td>${item.amount}</td>
+                    <td>${item.total}<button style="background-color: red; color: white; padding: 5px 5px; border-radius: 50%; margin-left: 10px" onclick="deleteItem(${index})">X</button></td>
+
+                </tr>s
+                `)
+
+            })
+            updateTotalPrice();
+            calculateVAT();
+
+        }
+
+        function updateTotalPrice(){
+            const totalPrice = items.reduce((acc, item) => acc + item.total, 0);
+            $("#totalPrice").text(totalPrice);
+        }
+        function calculateVAT(){
+            const totalPrice = items.reduce((acc, item) => acc + item.total, 0);
+            const vatAmount = totalPrice * 0.07;
+            const netPrice = totalPrice + vatAmount;
+            $("#vatAmount").text(vatAmount.toFixed(2));
+            $("#netPrice").text(netPrice);
+        }
+
         function calculatePrice(accessory) {
             // Add your own logic to calculate the price based on the selected accessory
             switch (accessory) {
@@ -80,22 +157,10 @@
             }
         }
        
-        function updateTotalPrice(price) {
-            var totalPriceElement = $("#totalPrice")[0].innerHTML;
-            console.log(totalPriceElement)
-            var totalPrice = parseFloat(totalPriceElement);
-            totalPrice += price;
-            $("#totalPrice")[0].innerHTML = totalPrice.toFixed(2);
-        }
 
-        function calculateVAT(){
-            let p = $("#totalPrice")[0].innerText
-            let grossprice = parseFloat(p);
-            let vatRate = 0.07;
-            let vatAmount = grossprice * vatRate;
-            $("#vatAmount")[0].innerHTML = vatAmount.toFixed(2);
-            $("#netPrice")[0].innerHTML = (grossprice + vatAmount).toFixed(2);
-        } 
     </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+    integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+    crossorigin="anonymous"></script>
 </body>
 </html>
